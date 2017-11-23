@@ -3,6 +3,33 @@ library(scatterplot3d)
 library(class)
 library(caret)
 
+
+bar_plot<-function(cm, title) {
+  correct<-c(cm[1],cm[4])
+  wrong<-c(cm[3],cm[2])
+  m<-c(correct,wrong)
+  mat<- matrix(m,nrow=2,ncol=2,byrow=TRUE)
+  rownames(mat)<-c("Correct", "Wrong")
+  colnames(mat)<-c("Spam", "NonSpam")
+  accuracy<-(cm[1] + cm[4])*100/(cm[1]+cm[2]+cm[3]+cm[4])
+  formatted_accuracy<-format(round(accuracy, 2), nsmall = 2)
+  accuracy_label<-paste("Accuracy = ", formatted_accuracy, "%")
+  barplot(mat,main=title, xlab=accuracy_label, ylab="Number of Samples", col=c("green","red"), legend = rownames(mat))
+}
+
+
+#knn.reg(train.traindataset,test.testdataset,k=3)
+Accuracy<-function(){
+  actual<-test.def
+  print(actual)
+  prediction<-unlist(pred_data[,4])
+  print(length(prediction))
+  knn_cm<-table(actual,prediction)
+  print(knn_cm)
+  confusionMatrix(actual,prediction)
+  return(knn_cm)
+}
+
 traindataset <- read.csv("Training_Dataset.csv")
 head (traindataset)
 
@@ -56,14 +83,8 @@ legend("topleft",col=c('black','red','yellow','green'),pch=c(21,24),bg=c(1,1),
 pred_data<-data.frame(test.testdataset,pred=knn.100)
 #print(pred_data[,4])
 print(test.def)
+knn_cm<-Accuracy()
 
-#knn.reg(train.traindataset,test.testdataset,k=3)
-
-Accuracy<-function(){
-  actual<-test.def
-  print(actual)
-  prediction<-unlist(pred_data[,4])
-  print(length(prediction))
-  table(actual,prediction)
-  confusionMatrix(actual,prediction)
-}
+par(mfrow=c(1,2))
+bar_plot(knn_cm,"KNN ALGORITHM CLASSIFICATION FOR TEST DATA")
+bar_plot(knn_cm,"KNN ALGORITHM CLASSIFICATION FOR TEST DATA")
